@@ -93,5 +93,11 @@
   100% {
       transform: rotate(360deg);
   }
-  } 
+  }
+
+  .alert-box {
+    margin-top: 5px;
+    color: #097969;
+    padding: 5px;
+  }
 

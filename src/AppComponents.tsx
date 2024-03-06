@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useRef, useState } from 'react';
 import './App.css'
 
 const NAME_OR_MARK = "Nimi tai nimimerkki*";
@@ -6,53 +6,86 @@ const SONG = "Biisi*"
 const FACEPICTURE = "Kasvokuva"
 const PERMISSION_TEXT = "Sallin tietojeni tallennuksen karaokejärjestelmään";
 
-const Loader: React.FC = () => {
-    return <span className="loader"></span>;
-  };
+interface NotificationProps {
+    message: string;
+}
+
+const Loader: React.FC = () => (
+    <span className="loader"></span>
+);
+
+const Notification: React.FC<NotificationProps> = props => (
+    <div className="alert-box">
+      {props.message}
+    </div>
+);
+
 
 export const NameForm: React.FC = () => {
-    const [songName, setSongName] = useState<string>("")
+    const [name, setName] = useState<string>("")
+    const [songName, setSongName] = useState<string>("DEFAULT")
     const [selectedKey, setSelectedKey] = useState<string | null>(null);
     const fileRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | undefined | null>();
     const [showLoader, setShowLoader] = useState(false);
+    const [allFieldsValid, setAllFieldsValid] = useState<boolean>(true);
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+        setName(event?.target.value);
+    }, [])
+
+    const handleFileSelection = (event: ChangeEvent<HTMLInputElement>) => {
         const selectedFile = event.target.files && event.target.files[0];
         setFile(selectedFile);
     };
     
     const handleButtonClick = useCallback(() => {
-        setShowLoader(true);
+        const checkBoxElement = document.getElementById("save_permission") as HTMLInputElement;
+        console.log(name)
+        console.log(songName)
+        console.log(selectedKey)
+        console.log(checkBoxElement.checked)
+        const areAllFieldsChecked = name !== "" && songName !== "DEFAULT" && 
+                                    selectedKey !== null && checkBoxElement.checked;
 
-        setTimeout(() => {
-            setShowLoader(false);
-        }, 2000);
+        if (!areAllFieldsChecked) {
+            setAllFieldsValid(false);
+            setTimeout(() => {
+               setAllFieldsValid(true)
+            }, 2000);
+        }
+        else {
+            setShowLoader(true);
 
-        setSongName("")
-    }, [])
+            setTimeout(() => {
+                setShowLoader(false);
+                setName("");
+                setSelectedKey(null);
+                setSongName("DEFAULT");
+                if (file !== null) {
+                    setFile(null);
+                }
+            }, 2000);
+        }
+    }, [name, songName, selectedKey, file])
 
     const handleKeySelection = useCallback((value: string) => {
+        console.log("Key: ", value)
         setSelectedKey((prev) => (prev === value ? null : value));
       }, []);
-
-    const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setSongName("");
-    };
 
     const getButtonClassName = (value: string) => {
         return `selection-button ${selectedKey === value ? 'selected' : ''}`;
     };
     
     return (
-        <form onSubmit={handleFormSubmit} className="karaoke-form">
+        <div className="karaoke-form">
             <label>{NAME_OR_MARK}</label>
             <input
                 type="text"
                 id="personName"
-                value={songName}
-                onChange={(e) => setSongName(e.target.value)}
+                value={name}
+                onChange={handleNameChange}
                 className="karaoke-form-name-input"
             />
 
@@ -64,13 +97,17 @@ export const NameForm: React.FC = () => {
                 type="file"
                 ref={fileRef}
                 hidden
-                onChange={handleChange}
+                onChange={handleFileSelection}
                 />
                 +Tuo kasvokuva
             </button>
 
             <label>{SONG}</label>
-            <select defaultValue={"DEFAULT"} className="karaoke-form-dropdown">
+            <select
+                value={songName}
+                className="karaoke-form-dropdown" 
+                onChange={(e) => setSongName(e.target.value)}
+            >
                 <option value="DEFAULT" disabled>Valitse alta</option>
                 <option value="Pate">Mä elän vieläkin</option>
                 <option value="Paula">Aikuinen nainen</option>
@@ -119,6 +156,9 @@ export const NameForm: React.FC = () => {
                 <button onClick={handleButtonClick} className="form-submit-button">
                     {showLoader ? <Loader /> : "Ilmoittaudu"}
                 </button>
-        </form>
+                {allFieldsValid ? 
+                    null:
+                    (<Notification message={"All required fields (*) not checked"} />)}
+        </div>
     )
 }
