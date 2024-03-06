@@ -16,11 +16,16 @@ const FormLabel: React.FC<LabelProps> = props => {
     )
 }
 
+const Loader: React.FC = () => {
+    return <span className="loader"></span>;
+  };
+
 export const NameForm: React.FC = () => {
     const [songName, setSongName] = useState<string>("")
     const [selectedKey, setSelectedKey] = useState<string | null>(null);
     const fileRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | undefined | null>();
+    const [showLoader, setShowLoader] = useState(false);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const selectedFile = event.target.files && event.target.files[0];
@@ -28,6 +33,12 @@ export const NameForm: React.FC = () => {
     };
     
     const handleButtonClick = useCallback(() => {
+        setShowLoader(true);
+
+        setTimeout(() => {
+            setShowLoader(false);
+        }, 2000);
+
         setSongName("")
     }, [])
 
@@ -116,7 +127,7 @@ export const NameForm: React.FC = () => {
             </div>
 
                 <button onClick={handleButtonClick} className="form-submit-button">
-                    Ilmoittaudu
+                    {showLoader ? <Loader /> : "Ilmoittaudu"}
                 </button>
         </form>
     )
