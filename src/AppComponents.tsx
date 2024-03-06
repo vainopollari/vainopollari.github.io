@@ -1,10 +1,15 @@
 import { ChangeEvent, useCallback, useRef, useState } from 'react';
 import './App.css'
 
-const NAME_OR_MARK = "Nimi tai nimimerkki*";
-const SONG = "Biisi*"
-const FACEPICTURE = "Kasvokuva"
+const NAME_OR_ID_LABEL = "Nimi tai nimimerkki*";
+const SONG_SELECTION_LABEL = "Biisi*"
+const IMAGE_LABEL = "Kasvokuva"
+const IMAGE_SELECTION_TEXT = "+Tuo kasvokuva";
+const KEYOTE_LABEL = "Sävellaji*";
 const PERMISSION_TEXT = "Sallin tietojeni tallennuksen karaokejärjestelmään";
+
+const SIGNUP_TEXT = "Ilmoittaudu";
+const SAVE_FAIL = "Ilmoittautuminen epäonnistui, täytä kaikki vaaditut kentät";
 
 interface NotificationProps {
     message: string;
@@ -21,7 +26,7 @@ const Notification: React.FC<NotificationProps> = props => (
 );
 
 
-export const NameForm: React.FC = () => {
+export const KaraokeForm: React.FC = () => {
     const [name, setName] = useState<string>("")
     const [songName, setSongName] = useState<string>("DEFAULT")
     const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -30,21 +35,15 @@ export const NameForm: React.FC = () => {
     const [showLoader, setShowLoader] = useState(false);
     const [allFieldsValid, setAllFieldsValid] = useState<boolean>(true);
 
-    const handleNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        setName(event?.target.value);
-    }, [])
-
     const handleFileSelection = (event: ChangeEvent<HTMLInputElement>) => {
         const selectedFile = event.target.files && event.target.files[0];
-        setFile(selectedFile);
+        if (selectedFile?.type === "image/png" || selectedFile?.type === "image/jpeg") {
+            setFile(selectedFile);
+        }
     };
     
     const handleButtonClick = useCallback(() => {
         const checkBoxElement = document.getElementById("save_permission") as HTMLInputElement;
-        console.log(name)
-        console.log(songName)
-        console.log(selectedKey)
-        console.log(checkBoxElement.checked)
         const areAllFieldsChecked = name !== "" && songName !== "DEFAULT" && 
                                     selectedKey !== null && checkBoxElement.checked;
 
@@ -62,6 +61,7 @@ export const NameForm: React.FC = () => {
                 setName("");
                 setSelectedKey(null);
                 setSongName("DEFAULT");
+                checkBoxElement.checked = false;
                 if (file !== null) {
                     setFile(null);
                 }
@@ -70,27 +70,26 @@ export const NameForm: React.FC = () => {
     }, [name, songName, selectedKey, file])
 
     const handleKeySelection = useCallback((value: string) => {
-        console.log("Key: ", value)
         setSelectedKey((prev) => (prev === value ? null : value));
       }, []);
 
-    const getButtonClassName = (value: string) => {
+    const getSelectionButtonClassName = (value: string) => {
         return `selection-button ${selectedKey === value ? 'selected' : ''}`;
     };
     
     return (
         <div className="karaoke-form">
-            <label>{NAME_OR_MARK}</label>
+            <label>{NAME_OR_ID_LABEL}</label>
             <input
                 type="text"
                 id="personName"
                 value={name}
-                onChange={handleNameChange}
+                onChange={(e) => setName(e.target.value)}
                 className="karaoke-form-name-input"
             />
 
-            <label>{FACEPICTURE}</label>
-            <button onClick={() => fileRef.current?.click()} className="facepicture">
+            <label>{IMAGE_LABEL}</label>
+            <button onClick={() => fileRef.current?.click()} className="image-selection">
                 <input
                 id="upload"
                 name="upload"
@@ -99,10 +98,10 @@ export const NameForm: React.FC = () => {
                 hidden
                 onChange={handleFileSelection}
                 />
-                +Tuo kasvokuva
+                {IMAGE_SELECTION_TEXT}
             </button>
 
-            <label>{SONG}</label>
+            <label>{SONG_SELECTION_LABEL}</label>
             <select
                 value={songName}
                 className="karaoke-form-dropdown" 
@@ -114,51 +113,51 @@ export const NameForm: React.FC = () => {
                 <option value="Vesku">Tuomittuna kulkemaan</option>
             </select>
 
-            <label>Sävellaji*</label>
+            <label>{KEYOTE_LABEL}</label>
             <div className="selection-buttons">
                 <input 
                     type="button" 
                     value="-2" 
-                    className={getButtonClassName("-2")}
+                    className={getSelectionButtonClassName("-2")}
                     onClick={() => handleKeySelection("-2")}
                 />
                 <input 
                     type="button" 
                     value="-1"
-                    className={getButtonClassName("-1")}
+                    className={getSelectionButtonClassName("-1")}
                     onClick={() => handleKeySelection("-1")}
                 />
                 <input 
                     type="button" 
                     value="0" 
-                    className={getButtonClassName("0")}
+                    className={getSelectionButtonClassName("0")}
                     onClick={() => handleKeySelection("0")}
                 />
                 <input 
                     type="button" 
                     value="+1" 
-                    className={getButtonClassName("+1")}
+                    className={getSelectionButtonClassName("+1")}
                     onClick={() => handleKeySelection("+1")}
                 />
                 <input 
                     type="button" 
                     value="+2" 
-                    className={getButtonClassName("+2")}
+                    className={getSelectionButtonClassName("+2")}
                     onClick={() => handleKeySelection("+2")}
                 />
             </div>
 
             <div className="form-checkbox">
                 <input type="checkbox" id="save_permission" name="permission" />
-                <label htmlFor="save_permission">{PERMISSION_TEXT}</label>
+                <label>{PERMISSION_TEXT}</label>
             </div>
 
                 <button onClick={handleButtonClick} className="form-submit-button">
-                    {showLoader ? <Loader /> : "Ilmoittaudu"}
+                    {showLoader ? <Loader /> : SIGNUP_TEXT}
                 </button>
                 {allFieldsValid ? 
                     null:
-                    (<Notification message={"All required fields (*) not checked"} />)}
+                    (<Notification message={SAVE_FAIL} />)}
         </div>
     )
 }

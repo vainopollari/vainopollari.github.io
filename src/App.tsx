@@ -1,11 +1,11 @@
 import './App.css'
-import {  NameForm } from './AppComponents'
+import { KaraokeForm } from './AppComponents'
 
 export const App = () => {
   return (
     <>
       <h3>Ilmoittautumislomake</h3>
-      <NameForm />
+      <KaraokeForm />
     </>
   )
 }
