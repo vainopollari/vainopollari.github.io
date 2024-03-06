@@ -6,16 +6,6 @@ const SONG = "Biisi*"
 const FACEPICTURE = "Kasvokuva"
 const PERMISSION_TEXT = "Sallin tietojeni tallennuksen karaokejärjestelmään";
 
-interface LabelProps {
-    text: string;
-}
-
-const FormLabel: React.FC<LabelProps> = props => {
-    return (
-        <label>{props.text}</label>
-    )
-}
-
 const Loader: React.FC = () => {
     return <span className="loader"></span>;
   };
@@ -57,7 +47,7 @@ export const NameForm: React.FC = () => {
     
     return (
         <form onSubmit={handleFormSubmit} className="karaoke-form">
-            <FormLabel text={NAME_OR_MARK} />
+            <label>{NAME_OR_MARK}</label>
             <input
                 type="text"
                 id="personName"
@@ -66,7 +56,7 @@ export const NameForm: React.FC = () => {
                 className="karaoke-form-name-input"
             />
 
-            <FormLabel text={FACEPICTURE} />
+            <label>{FACEPICTURE}</label>
             <button onClick={() => fileRef.current?.click()} className="facepicture">
                 <input
                 id="upload"
@@ -79,7 +69,7 @@ export const NameForm: React.FC = () => {
                 +Tuo kasvokuva
             </button>
 
-            <FormLabel text={SONG} />
+            <label>{SONG}</label>
             <select defaultValue={"DEFAULT"} className="karaoke-form-dropdown">
                 <option value="DEFAULT" disabled>Valitse alta</option>
                 <option value="Pate">Mä elän vieläkin</option>
@@ -87,7 +77,7 @@ export const NameForm: React.FC = () => {
                 <option value="Vesku">Tuomittuna kulkemaan</option>
             </select>
 
-            <FormLabel text="Sävellaji*" />
+            <label>Sävellaji*</label>
             <div className="selection-buttons">
                 <input 
                     type="button" 
