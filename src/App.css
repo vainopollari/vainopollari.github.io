@@ -1,0 +1,77 @@
+#root {
+  display: flex;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  align-items: start;
+  flex-direction: column;
+}
+
+.karaoke-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.karaoke-form-name-input {
+  border-radius: 5px;
+  height: 50px;
+}
+
+.facepicture {
+  border-radius: 5px;
+  border: 1px dashed;
+  padding: 0.5em 2.5em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  height: 50px;
+}
+
+.karaoke-form-dropdown {
+  border-radius: 5px;
+}
+
+.form-checkbox {
+  color: 	#808080;
+  margin-top: 10px;
+
+}
+
+.selection-buttons {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid;
+  border-radius: 5px;
+}
+
+.selection-button {
+  padding: 0.5em 1.5em;
+  font-family: inherit;
+  cursor: pointer;
+  width: 100%;
+}
+
+.selection-button.selected {
+  padding: 0.5em 1.5em;
+  font-family: inherit;
+  cursor: pointer;
+  width: 100%;
+  background-color: #097969;
+  color: white
+}
+
+.form-submit-button {
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  padding: 0.5em 2.5em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  background-color: #097969;
+  color: white;
+  width: 50%;
+}
+
